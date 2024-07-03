@@ -4,27 +4,31 @@ public class Coffee {
 
     private String name;
     private int volume;
-    private String type;
+//    private String type;
+    private CoffeeType type;
+
+    private double price;
     private CoffeeVan coffeeVan;
 
-    public Coffee(String name, int volume, CoffeeType type, CoffeeVan van) {
+    public Coffee(String name, int volume, CoffeeType type, double price, CoffeeVan van) {
         this.name = name;
         this.volume = volume;
+        this.price = price;
         switch (type) {
             case COFFEE_BEANS: {
-                this.type = "coffee beans";
+                this.type = CoffeeType.COFFEE_BEANS;
                 break;
             }
             case GROUND_COFFEE: {
-                this.type = "ground coffee";
+                this.type = CoffeeType.GROUND_COFFEE;
                 break;
             }
             case INSTANT_COFFEE_JAR: {
-                this.type = "instant coffee jar";
+                this.type = CoffeeType.INSTANT_COFFEE_JAR;
                 break;
             }
             case INSTANT_COFFEE_PACKET: {
-                this.type = "instant coffee packet";
+                this.type = CoffeeType.INSTANT_COFFEE_PACKET;
                 break;
             }
         }
@@ -50,11 +54,19 @@ public class Coffee {
         this.volume = volume;
     }
 
-    public String getType() {
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public CoffeeType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(CoffeeType type) {
         this.type = type;
     }
 
