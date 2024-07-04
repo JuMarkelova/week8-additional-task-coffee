@@ -6,45 +6,27 @@ import cy.markelova.coffee.entity.CoffeeVan;
 
 import java.util.Scanner;
 
-public class MenuActions {
+import static cy.markelova.coffee.service.MenuMessages.*;
 
-    String instructionsMenu = """
-             Select an option:
-             0 - show the instruction
-             1 - load a coffee
-             2 - get info about van
-             3 - get a list of loaded coffee sorted by price
-             4 - get a list of loaded coffee by volume
-             5 - get a number of loaded items
-             6 - get a sum of loaded items
-             7 - get an amount of available space in a van
-             8 - get a list of coffee filtered by min and max price
-             exit - exit
-            """;
-    String instructionsLoadingCoffee = String.format("""
-                    Enter 4 parameters of coffee separated by spaces (or exit):
-                    name volume type* price
-                    * one of %s %s %s %s""",
-            CoffeeType.COFFEE_BEANS, CoffeeType.GROUND_COFFEE, CoffeeType.INSTANT_COFFEE_JAR,
-            CoffeeType.INSTANT_COFFEE_PACKET);
+public class MenuActions {
 
     public void runMenu(CoffeeVan van) {
         boolean isLoadingCoffee = true;
         Scanner scanner = new Scanner(System.in);
-        System.out.println(instructionsMenu);
+        System.out.println(INSTRUCTIONS_MENU);
 
         while (isLoadingCoffee) {
+            System.out.println(MAIN_MENU);
             String userOption = scanner.nextLine();
             switch (userOption) {
                 case "0": {
-                    System.out.println(instructionsMenu);
+                    System.out.println(INSTRUCTIONS_MENU);
                     break;
                 }
                 case "1": {
-                    System.out.println(instructionsLoadingCoffee);
+                    System.out.println(INSTRUCTIONS_LOADING_COFFEE);
                     String[] parameters = scanner.nextLine().split(" ");
                     if (parameters[0].equals("exit")) {
-                        System.out.println("You are in the main menu.");
                         break;
                     } else loadCoffee(parameters, van);
                     break;
@@ -62,23 +44,21 @@ public class MenuActions {
                     break;
                 }
                 case "5": {
-                    System.out.println("If you want write a type of coffee*. If you want to get a number of all coffees write 0.\n"
-                            + String.format("* one of %s %s %s %s",
-                            CoffeeType.COFFEE_BEANS, CoffeeType.GROUND_COFFEE, CoffeeType.INSTANT_COFFEE_JAR,
-                            CoffeeType.INSTANT_COFFEE_PACKET));
+                    System.out.println(CHOOSING_COFFEE_MESSAGE);
                     userOption = scanner.nextLine();
                     if (userOption.equals("0")) {
-                        van.printNumberItems(van.countItems());
+                        van.printNumberItems(van.countLoadedItems());
                     } else
-                        van.printNumberItems(van.countItems(CoffeeType.valueOf(userOption)), CoffeeType.valueOf(userOption));
+                        van.printNumberItems(van.countLoadedItems(CoffeeType.valueOf(userOption)), CoffeeType.valueOf(userOption));
                     break;
                 }
                 case "6": {
-                    System.out.println("If you want write a type of coffee*. If you want to get a number of all coffees write 0.");
+                    System.out.println(CHOOSING_COFFEE_MESSAGE);
                     userOption = scanner.nextLine();
                     if (userOption.equals("0")) {
-                        van.printPrice(van.sumPrice());
-                    } else van.printPrice(van.sumPrice(CoffeeType.valueOf(userOption)), CoffeeType.valueOf(userOption));
+                        van.printPrice(van.sumPriceLoadedItems());
+                    } else
+                        van.printPrice(van.sumPriceLoadedItems(CoffeeType.valueOf(userOption)), CoffeeType.valueOf(userOption));
                     break;
                 }
                 case "7": {
@@ -86,7 +66,7 @@ public class MenuActions {
                     break;
                 }
                 case "8": {
-                    System.out.println("Enter min price and max price to get a list of filtered items.");
+                    System.out.println(PRICE_FILTER_MESSAGE);
                     double minFilterPrice = Double.parseDouble(scanner.nextLine());
                     double maxFilterPrice = Double.parseDouble(scanner.nextLine());
                     van.printListOfCoffee(van.findItem(minFilterPrice, maxFilterPrice));

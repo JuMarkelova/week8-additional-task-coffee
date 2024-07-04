@@ -12,7 +12,7 @@ public class CoffeeVan implements Analytics {
     int count = 0;
     private int volume;
     private int availableVolume;
-    private final int NUMBER;
+    private final long NUMBER;
     private List<Coffee> coffees = new ArrayList<>();
 
     public CoffeeVan(int volume) {
@@ -29,7 +29,7 @@ public class CoffeeVan implements Analytics {
         this.volume = volume;
     }
 
-    public int getNumber() {
+    public long getNumber() {
         return NUMBER;
     }
 
@@ -57,19 +57,18 @@ public class CoffeeVan implements Analytics {
     }
 
     @Override
-    public long countItems(CoffeeType type) {
-        return this.getCoffees().stream().filter(coffee -> coffee.getType() == type).count();
-    }
-
-    public long countItems() {
+    public long countLoadedItems() {
         return this.getCoffees().size();
     }
 
+    public long countLoadedItems(CoffeeType type) {
+        return this.getCoffees().stream().filter(coffee -> coffee.getType() == type).count();
+    }
+
     @Override
-    public double sumPrice(CoffeeType type) {
+    public double sumPriceLoadedItems() {
         double priceDouble = 0;
         Optional<Double> price = this.getCoffees().stream()
-                .filter(coffee -> coffee.getType() == type)
                 .map(coffee -> coffee.getPrice()).reduce((prev, next) -> prev + next);
         if (price.isPresent()) {
             priceDouble = price.get();
@@ -77,9 +76,10 @@ public class CoffeeVan implements Analytics {
         return priceDouble;
     }
 
-    public double sumPrice() {
+    public double sumPriceLoadedItems(CoffeeType type) {
         double priceDouble = 0;
         Optional<Double> price = this.getCoffees().stream()
+                .filter(coffee -> coffee.getType() == type)
                 .map(coffee -> coffee.getPrice()).reduce((prev, next) -> prev + next);
         if (price.isPresent()) {
             priceDouble = price.get();
@@ -97,7 +97,7 @@ public class CoffeeVan implements Analytics {
     @Override
     public List<Coffee> sortByWeight() {
         return coffees.stream().
-                sorted((coffee1, coffee2) -> Double.compare(coffee1.getVolume(), coffee2.getVolume())).
+                sorted((coffee1, coffee2) -> Double.compare(coffee1.getWeight(), coffee2.getWeight())).
                 toList();
     }
 
@@ -126,9 +126,9 @@ public class CoffeeVan implements Analytics {
 
     public void printNumberItems(long count) {
         if (count == 0) {
-            System.out.printf("There is no items of all types in this van yet.\n");
+            System.out.println("There is no items of all types in this van yet.\n");
         } else if (count == 1) {
-            System.out.printf("There is 1 item of all types in this van.\n");
+            System.out.printf("There is %d item of all types in this van.\n", count);
         } else {
             System.out.printf("There are %d items of all types in this van.\n", count);
         }
@@ -144,9 +144,5 @@ public class CoffeeVan implements Analytics {
 
     public List<Coffee> findItem(double minPrice, double maxPrice) {
         return coffees.stream().filter(coffee -> coffee.getPrice() >= minPrice && coffee.getPrice() <= maxPrice).collect(Collectors.toList());
-    }
-
-    public CoffeeVan getVanByNumber(int number) {
-        return this;
     }
 }

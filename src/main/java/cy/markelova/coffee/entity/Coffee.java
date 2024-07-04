@@ -3,14 +3,14 @@ package cy.markelova.coffee.entity;
 public class Coffee {
 
     private String name;
-    private int volume;
+    private int weight;
     private CoffeeType type;
     private double price;
     private CoffeeVan coffeeVan;
 
-    public Coffee(String name, int volume, CoffeeType type, double price, CoffeeVan van) {
+    public Coffee(String name, int weight, CoffeeType type, double price, CoffeeVan van) {
         this.name = name;
-        this.volume = volume;
+        this.weight = weight;
         this.price = price;
         switch (type) {
             case COFFEE_BEANS: {
@@ -30,7 +30,7 @@ public class Coffee {
                 break;
             }
         }
-        if (van.reduceAvailableSpace(volume)) {
+        if (van.reduceAvailableSpace(weight)) {
             this.coffeeVan = van;
             van.setCoffees(this);
         }
@@ -44,12 +44,12 @@ public class Coffee {
         this.name = name;
     }
 
-    public int getVolume() {
-        return volume;
+    public int getWeight() {
+        return weight;
     }
 
-    public void setVolume(int volume) {
-        this.volume = volume;
+    public void setWeight(int weight) {
+        this.weight = weight;
     }
 
     public double getPrice() {
@@ -78,11 +78,7 @@ public class Coffee {
 
     @Override
     public String toString() {
-        return "Coffee: {"
-                + "name = " + name
-                + ", volume = " + volume
-                + " gr, type = " + type
-                + " price = " + price
-                + ", coffeeVan = " + coffeeVan.getNumber() + "}";
+        return String.format("Coffee {name: %-10s, wight: %-4d gr, type: %-21s, price: %-6.2f, coffee van: %3d}",
+                name, weight, type, price, coffeeVan.getNumber());
     }
 }
