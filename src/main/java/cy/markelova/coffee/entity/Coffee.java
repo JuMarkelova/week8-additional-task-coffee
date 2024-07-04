@@ -4,9 +4,7 @@ public class Coffee {
 
     private String name;
     private int volume;
-//    private String type;
     private CoffeeType type;
-
     private double price;
     private CoffeeVan coffeeVan;
 
@@ -80,6 +78,11 @@ public class Coffee {
 
     @Override
     public String toString() {
-        return "Coffee: {" + "name = " + name + ", volume = " + volume + " gr, type = " + type + ", coffeeVan = " + coffeeVan + "}";
+        return "Coffee: {"
+                + "name = " + name
+                + ", volume = " + volume
+                + " gr, type = " + type
+                + " price = " + price
+                + ", coffeeVan = " + coffeeVan.getNumber() + "}";
     }
 }

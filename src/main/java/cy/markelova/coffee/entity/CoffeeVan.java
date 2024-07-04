@@ -5,14 +5,18 @@ import cy.markelova.coffee.service.Analytics;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class CoffeeVan implements Analytics {
 
+    int count = 0;
     private int volume;
     private int availableVolume;
+    private final int NUMBER;
     private List<Coffee> coffees = new ArrayList<>();
 
     public CoffeeVan(int volume) {
+        this.NUMBER = ++count;
         this.volume = volume;
         this.availableVolume = volume;
     }
@@ -23,6 +27,10 @@ public class CoffeeVan implements Analytics {
 
     public void setVolume(int volume) {
         this.volume = volume;
+    }
+
+    public int getNumber() {
+        return NUMBER;
     }
 
     public int getAvailableVolume() {
@@ -43,7 +51,9 @@ public class CoffeeVan implements Analytics {
 
     @Override
     public String toString() {
-        return "Coffee Van: {" + " volume = " + volume + ", availableVolume = " + getAvailableVolume() + "}";
+        return "Coffee Van: {"
+                + " volume = " + volume
+                + ", availableVolume = " + getAvailableVolume() + "}";
     }
 
     @Override
@@ -51,8 +61,12 @@ public class CoffeeVan implements Analytics {
         return this.getCoffees().stream().filter(coffee -> coffee.getType() == type).count();
     }
 
+    public long countItems() {
+        return this.getCoffees().size();
+    }
+
     @Override
-    public double countPrice(CoffeeType type) {
+    public double sumPrice(CoffeeType type) {
         double priceDouble = 0;
         Optional<Double> price = this.getCoffees().stream()
                 .filter(coffee -> coffee.getType() == type)
@@ -63,28 +77,76 @@ public class CoffeeVan implements Analytics {
         return priceDouble;
     }
 
+    public double sumPrice() {
+        double priceDouble = 0;
+        Optional<Double> price = this.getCoffees().stream()
+                .map(coffee -> coffee.getPrice()).reduce((prev, next) -> prev + next);
+        if (price.isPresent()) {
+            priceDouble = price.get();
+        }
+        return priceDouble;
+    }
+
+    @Override
+    public List<Coffee> sortByPrice() {
+        return coffees.stream().
+                sorted((coffee1, coffee2) -> Double.compare(coffee1.getPrice(), coffee2.getPrice())).
+                toList();
+    }
+
+    @Override
+    public List<Coffee> sortByWeight() {
+        return coffees.stream().
+                sorted((coffee1, coffee2) -> Double.compare(coffee1.getVolume(), coffee2.getVolume())).
+                toList();
+    }
+
+    public void printListOfCoffee(List<Coffee> coffees) {
+        coffees.stream().forEach(coffee -> System.out.println(coffee));
+    }
+
     public boolean reduceAvailableSpace(int value) {
         boolean operationFinishedSuccessfully = false;
-        if (value < this.availableVolume) {
+        if (value <= this.availableVolume) {
             this.availableVolume = this.availableVolume - value;
             operationFinishedSuccessfully = true;
         } else System.out.println("It is not enough space in this van.");
         return operationFinishedSuccessfully;
     }
 
-    public void printCountItems(CoffeeType type) {
-        long count = countItems(type);
+    public void printNumberItems(long count, CoffeeType type) {
         if (count == 0) {
-            System.out.printf("There is no items with type %s in this van yet.\n", type);
+            System.out.printf("There is no items of type %s in this van yet.\n", type);
         } else if (count == 1) {
-            System.out.printf("There is 1 item with type %s in this van.\n", type);
+            System.out.printf("There is 1 item of type %s in this van.\n", type);
         } else {
-            System.out.printf("There are %d items with type %s in this van.\n", count, type);
+            System.out.printf("There are %d items of type %s in this van.\n", count, type);
         }
     }
 
-    public void printPrice(CoffeeType type) {
-        double count = countPrice(type);
-        System.out.printf("The price for items with type %s in this van is %.2f.\n", type, count);
+    public void printNumberItems(long count) {
+        if (count == 0) {
+            System.out.printf("There is no items of all types in this van yet.\n");
+        } else if (count == 1) {
+            System.out.printf("There is 1 item of all types in this van.\n");
+        } else {
+            System.out.printf("There are %d items of all types in this van.\n", count);
+        }
+    }
+
+    public void printPrice(double count, CoffeeType type) {
+        System.out.printf("The price for items of type %s in this van is %.2f.\n", type, count);
+    }
+
+    public void printPrice(double count) {
+        System.out.printf("The price for items of all types in this van is %.2f.\n", count);
+    }
+
+    public List<Coffee> findItem(double minPrice, double maxPrice) {
+        return coffees.stream().filter(coffee -> coffee.getPrice() >= minPrice && coffee.getPrice() <= maxPrice).collect(Collectors.toList());
+    }
+
+    public CoffeeVan getVanByNumber(int number) {
+        return this;
     }
 }
