@@ -80,6 +80,7 @@ public class MenuActions {
                     System.out.println("There is no such option.");
                 }
             }
+            scanner.close();
         }
     }
 
